@@ -5,6 +5,8 @@ import ExtensionIcon from '@material-ui/icons/Extension';
 import MapIcon from '@material-ui/icons/MyLocation';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
+import SettingsInputHdmiIcon from '@material-ui/icons/SettingsInputHdmi';
+import PublicIcon from '@material-ui/icons/Public';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
 import {
@@ -118,6 +120,18 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarScrollWrapper>
           <SidebarItem icon={MapIcon} to="tech-radar" text="Tech Radar" />
         </SidebarScrollWrapper>
+        <SidebarDivider />
+        {/* Global plugin nav */}
+        <SidebarItem icon={SettingsInputHdmiIcon} to="helloworld" text="Plugin">
+          <SidebarSubmenu title="Plugin">
+            <SidebarSubmenuItem
+              title="Hello World"
+              to="/helloworld"
+              icon={PublicIcon}
+            />
+          </SidebarSubmenu>
+        </SidebarItem>
+        {/* End global plugin nav */}
       </SidebarGroup>
       <SidebarSpace />
       <SidebarDivider />
