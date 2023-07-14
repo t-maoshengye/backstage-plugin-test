@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 type Repo = {
   name: string; // Repo name
   html_url: string; // Repo URL
-  description: string; // Repo description
+  description: string | null; // Repo description
   owner: { // Repo owner avatar
     login: string;
     avatar_url: string;
@@ -79,7 +79,7 @@ export const GithubReposFetchComponent = () => {
       visibility: 'public',
       affiliation: 'owner',
     });
-    if (!response.status === 200) {
+    if (response.status !== 200) {
       throw new Error(`GitHub API request failed: ${response.status}`);
     }
     return response.data;
