@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ExampleFetchComponent } from './ExampleFetchComponent';
+import { GithubReposFetchComponent } from './GithubReposFetchComponent';
 
-describe('ExampleFetchComponent', () => {
+describe('GithubReposFetchComponent', () => {
   it('renders the user table', async () => {
-    render(<ExampleFetchComponent />);
+    render(<GithubReposFetchComponent />);
 
     // Wait for the table to render
     const table = await screen.findByRole('table');

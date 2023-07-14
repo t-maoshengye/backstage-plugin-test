@@ -1,0 +1,1 @@
+export { GithubReposFetchComponent } from './GithubReposFetchComponent';

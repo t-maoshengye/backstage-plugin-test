@@ -9,9 +9,9 @@ import {
   HeaderLabel,
   SupportButton,
 } from '@backstage/core-components';
-import { ExampleFetchComponent } from '../ExampleFetchComponent';
+import { GithubReposFetchComponent } from '../GithubReposFetchComponent';
 
-export const ExampleComponent = () => (
+export const GithubReposComponent = () => (
   <Page themeId="tool">
     <Header title="Welcome to github-repos!" subtitle="Optional subtitle">
       <HeaderLabel label="Owner" value="Team X" />
@@ -30,7 +30,7 @@ export const ExampleComponent = () => (
           </InfoCard>
         </Grid>
         <Grid item>
-          <ExampleFetchComponent />
+          <GithubReposFetchComponent />
         </Grid>
       </Grid>
     </Content>
