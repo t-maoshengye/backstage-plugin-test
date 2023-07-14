@@ -7,6 +7,7 @@ import LibraryBooks from '@material-ui/icons/LibraryBooks';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import SettingsInputHdmiIcon from '@material-ui/icons/SettingsInputHdmi';
 import PublicIcon from '@material-ui/icons/Public';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
 import {
@@ -128,6 +129,11 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
               title="Hello World"
               to="/helloworld"
               icon={PublicIcon}
+            />
+            <SidebarSubmenuItem
+              title="Github Repos"
+              to="/github-repos"
+              icon={GitHubIcon}
             />
           </SidebarSubmenu>
         </SidebarItem>

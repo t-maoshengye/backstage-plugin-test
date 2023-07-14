@@ -1,0 +1,1 @@
+export { GithubReposComponent } from './GithubReposComponent';
