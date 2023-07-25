@@ -207,7 +207,6 @@ export const DenseTable = ({ repos }: DenseTableProps) => {
       console.error('Failed to create new branch and pull request:', e);
     }
   };
-  
   // < For handling pop-up edit boxes
 
   const columns: TableColumn[] = [
