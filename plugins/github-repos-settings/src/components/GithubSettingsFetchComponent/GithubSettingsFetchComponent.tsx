@@ -287,7 +287,7 @@ export const DenseTable = ({ users }: DenseTableProps) => {
   );
 };
 
-export const ExampleFetchComponent = () => {
+export const GithubSettingsFetchComponent = () => {
 
   const { value, loading, error } = useAsync(async (): Promise<User[]> => {
     // Would use fetch in a real world example

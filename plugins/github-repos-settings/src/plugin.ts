@@ -13,7 +13,7 @@ export const GithubReposSettingsPage = githubReposSettingsPlugin.provide(
   createRoutableExtension({
     name: 'GithubReposSettingsPage',
     component: () =>
-      import('./components/ExampleComponent').then(m => m.ExampleComponent),
+      import('./components/GithubSettingsComponent').then(m => m.GithubSettingsComponent),
     mountPoint: rootRouteRef,
   }),
 );
