@@ -42,7 +42,7 @@ type DenseTableProps = {
   repos: Repo[];
 };
 
-let gh_token = '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';
+let gh_token = 'ghp_';
 let target_file = '.gitignore';
 
 export const DenseTable = ({ repos }: DenseTableProps) => {
@@ -128,6 +128,85 @@ export const DenseTable = ({ repos }: DenseTableProps) => {
       setError(e.message);
     }
   };
+
+  const handleSaveBranchPR = async (repo: Repo) => {
+    try {
+      const octokit = new Octokit({ auth: gh_token });
+
+      const now = new Date();
+      const timestamp =
+        now.getFullYear() +
+        '' +
+        (now.getMonth() + 1) +
+        '' +
+        now.getDate() +
+        '' +
+        now.getHours() +
+        '' +
+        now.getMinutes() +
+        '' +
+        now.getSeconds();
+
+      // get default branch
+      const { data: repoData } = await octokit.repos.get({
+        owner: repo.owner.login,
+        repo: repo.name,
+      });
+      const defaultBranch = String(repoData.default_branch);
+
+      // Get the SHA of the latest commit on the base branch
+      const { data: refData } = await octokit.git.getRef({
+        owner: repo.owner.login,
+        repo: repo.name,
+        ref: `heads/${defaultBranch}`,
+      });
+      const baseSha = refData.object.sha;
+  
+      // Create new branch
+      const newBranchName = `create-by-backstage-${timestamp}`;
+      await octokit.git.createRef({
+        owner: repo.owner.login,
+        repo: repo.name,
+        ref: `refs/heads/${newBranchName}`,
+        sha: baseSha,
+      });
+
+      // Get file sha from new branch
+      const { data: fileData } = await octokit.repos.getContent({
+        owner: repo.owner.login,
+        repo: repo.name,
+        path: target_file,
+        ref: newBranchName
+      });
+
+      // Update file in the new branch
+      const message = `Update ${target_file} by Backstage at ${timestamp}`;
+      await octokit.repos.createOrUpdateFileContents({
+        owner: repo.owner.login,
+        repo: repo.name,
+        path: target_file,
+        message: message,
+        content: Buffer.from(dialogContent).toString('base64'),
+        sha: fileData.sha,
+        branch: newBranchName,
+      });
+
+      // Create pull request
+      await octokit.pulls.create({
+        owner: repo.owner.login,
+        repo: repo.name,
+        title: `pr-by-backstage-${timestamp}`,
+        head: newBranchName,
+        base: 'main',
+      });
+  
+      // console.log('New branch and pull request created successfully.');
+      setOpenSuccessSnackbar(true);
+      handleClose();
+    } catch (e) {
+      console.error('Failed to create new branch and pull request:', e);
+    }
+  };
   // < For handling pop-up edit boxes
 
   const columns: TableColumn[] = [
@@ -210,6 +289,9 @@ export const DenseTable = ({ repos }: DenseTableProps) => {
               </Button>
               <Button onClick={() => handleSave(currentRepo)} color="primary">
                 Save
+              </Button>
+              <Button onClick={() => handleSaveBranchPR(currentRepo)} color="primary">
+                Save to new branch and pull request
               </Button>
             </DialogActions>
           </>
