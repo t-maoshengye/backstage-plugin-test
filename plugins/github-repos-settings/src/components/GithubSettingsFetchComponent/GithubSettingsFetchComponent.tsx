@@ -1,232 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Table, TableColumn, Progress, ResponseErrorPanel } from '@backstage/core-components';
+import {
+  Table,
+  TableColumn,
+  Progress,
+  ResponseErrorPanel,
+} from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
+import { Octokit } from '@octokit/rest';
+import SettingsDialog from '../SettingsDialog';
 
-export const exampleUsers = {
-  "results": [
-    {
-      "gender": "female",
-      "name": {
-        "title": "Miss",
-        "first": "Carolyn",
-        "last": "Moore"
-      },
-      "email": "carolyn.moore@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Carolyn",
-      "nat": "GB"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Esma",
-        "last": "Berberoğlu"
-      },
-      "email": "esma.berberoglu@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Esma",
-      "nat": "TR"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Isabella",
-        "last": "Rhodes"
-      },
-      "email": "isabella.rhodes@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Isabella",
-      "nat": "GB"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Derrick",
-        "last": "Carter"
-      },
-      "email": "derrick.carter@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Derrick",
-      "nat": "IE"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Miss",
-        "first": "Mattie",
-        "last": "Lambert"
-      },
-      "email": "mattie.lambert@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Mattie",
-      "nat": "AU"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Mijat",
-        "last": "Rakić"
-      },
-      "email": "mijat.rakic@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Mijat",
-      "nat": "RS"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Javier",
-        "last": "Reid"
-      },
-      "email": "javier.reid@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Javier",
-      "nat": "US"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Isabella",
-        "last": "Li"
-      },
-      "email": "isabella.li@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Isabella",
-      "nat": "CA"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Mrs",
-        "first": "Stephanie",
-        "last": "Garrett"
-      },
-      "email": "stephanie.garrett@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Stephanie",
-      "nat": "AU"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Antonia",
-        "last": "Núñez"
-      },
-      "email": "antonia.nunez@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Antonia",
-      "nat": "ES"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Donald",
-        "last": "Young"
-      },
-      "email": "donald.young@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Donald",
-      "nat": "US"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Iegor",
-        "last": "Holodovskiy"
-      },
-      "email": "iegor.holodovskiy@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Iegor",
-      "nat": "UA"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Madame",
-        "first": "Jessica",
-        "last": "David"
-      },
-      "email": "jessica.david@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Jessica",
-      "nat": "CH"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Eve",
-        "last": "Martinez"
-      },
-      "email": "eve.martinez@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Eve",
-      "nat": "FR"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Caleb",
-        "last": "Silva"
-      },
-      "email": "caleb.silva@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Caleb",
-      "nat": "US"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Miss",
-        "first": "Marcia",
-        "last": "Jenkins"
-      },
-      "email": "marcia.jenkins@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Marcia",
-      "nat": "US"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Mrs",
-        "first": "Mackenzie",
-        "last": "Jones"
-      },
-      "email": "mackenzie.jones@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Mackenzie",
-      "nat": "NZ"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Jeremiah",
-        "last": "Gutierrez"
-      },
-      "email": "jeremiah.gutierrez@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Jeremiah",
-      "nat": "AU"
-    },
-    {
-      "gender": "female",
-      "name": {
-        "title": "Ms",
-        "first": "Luciara",
-        "last": "Souza"
-      },
-      "email": "luciara.souza@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Luciara",
-      "nat": "BR"
-    },
-    {
-      "gender": "male",
-      "name": {
-        "title": "Mr",
-        "first": "Valgi",
-        "last": "da Cunha"
-      },
-      "email": "valgi.dacunha@example.com",
-      "picture": "https://api.dicebear.com/6.x/open-peeps/svg?seed=Valgi",
-      "nat": "BR"
-    }
-  ]
-}
+let gh_token = 'ghp_';
 
 const useStyles = makeStyles({
   avatar: {
@@ -236,62 +20,125 @@ const useStyles = makeStyles({
   },
 });
 
-type User = {
-  gender: string; // "male"
-  name: {
-    title: string; // "Mr",
-    first: string; // "Duane",
-    last: string; // "Reed"
+type Repo = {
+  name: string; // Repo name
+  html_url: string; // Repo URL
+  description: string | null; // Repo description
+  owner: {
+    // Repo owner avatar
+    login: string;
+    avatar_url: string;
+    html_url: string;
   };
-  email: string; // "duane.reed@example.com"
-  picture: string; // "https://api.dicebear.com/6.x/open-peeps/svg?seed=Duane"
-  nat: string; // "AU"
 };
 
 type DenseTableProps = {
-  users: User[];
+  repos: Repo[];
 };
 
-export const DenseTable = ({ users }: DenseTableProps) => {
+export const DenseTable = ({ repos }: DenseTableProps) => {
+
+  const [open, setOpen] = useState(false);
+  const [currentRepo, setCurrentRepo] = useState<Repo | null>(null);
+
+  const handleOpen = (repo: Repo) => {
+    setCurrentRepo(repo)
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const classes = useStyles();
 
   const columns: TableColumn[] = [
-    { title: 'Avatar', field: 'avatar' },
-    { title: 'Name', field: 'name' },
-    { title: 'Email', field: 'email' },
-    { title: 'Nationality', field: 'nationality' },
+    { title: '', field: 'avatar', width: '5%' },
+    { title: 'Name', field: 'name', width: '25%' },
+    { title: 'URL', field: 'html_url', width: '35%' },
+    { title: 'Description', field: 'description' },
   ];
 
-  const data = users.map(user => {
+  const data = repos.map(repo => {
     return {
+      id: repo.name,
       avatar: (
-        <img
-          src={user.picture}
-          className={classes.avatar}
-          alt={user.name.first}
-        />
+        <a href={repo.owner.html_url} target="_blank" rel="noopener noreferrer">
+          <img
+            src={repo.owner.avatar_url}
+            className={classes.avatar}
+            alt={repo.owner.login}
+          />
+        </a>
       ),
-      name: `${user.name.first} ${user.name.last}`,
-      email: user.email,
-      nationality: user.nat,
+      // > Click pops up edit box
+      name: (
+        <a href="#" onClick={() => handleOpen(repo)}>
+          {repo.name}
+        </a>
+      ),
+      // < Click pops up edit box
+      html_url: (
+        <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+          {repo.html_url}
+        </a>
+      ),
+      description: repo.description,
     };
   });
 
   return (
-    <Table
-      title="Example User List"
-      options={{ search: false, paging: false }}
-      columns={columns}
-      data={data}
-    />
+    <>
+      <Table
+        title="GitHub Repositories"
+        options={{
+          search: true,
+          paging: true,
+          pageSize: 10,
+          pageSizeOptions: [10, 20, 50],
+        }}
+        columns={columns}
+        data={data}
+      />
+      {/* > For handling pop-up edit boxes */}
+      {currentRepo && <SettingsDialog open={open} onClose={handleClose} repo={currentRepo} gh_token={gh_token} />}
+      {/* < For handling pop-up edit boxes */}
+
+    </>
   );
 };
 
 export const GithubSettingsFetchComponent = () => {
+  const { value, loading, error } = useAsync(async (): Promise<Repo[]> => {
+    const octokit = new Octokit({ auth: gh_token });
 
-  const { value, loading, error } = useAsync(async (): Promise<User[]> => {
-    // Would use fetch in a real world example
-    return exampleUsers.results;
+    const responses = await Promise.all([
+      octokit.rest.repos.get({
+        owner: 'Pay-Baymax',
+        repo: 'github-terraform-backstage-poc',
+      }),
+      // octokit.rest.repos.get({
+      //   owner: 't-maoshengye',
+      //   repo: 'for-backstage-github-operation-test',
+      // })
+    ]);
+    const repos = responses.map((response) => response.data);
+    return repos
+
+    // const [response1, response2] = await Promise.all([
+    //   octokit.rest.repos.get({
+    //     owner: 'Pay-Baymax',
+    //     repo: 'github-terraform-backstage-poc',
+    //   }),
+    //   octokit.rest.repos.get({
+    //     owner: 't-maoshengye',
+    //     repo: 'for-backstage-github-operation-test',
+    //   })
+    // ]);
+    // if (response1.status !== 200 || response2.status !== 200) {
+    //   throw new Error(`GitHub API request failed`);
+    // }
+    // return [response1.data, response2.data];
   }, []);
 
   if (loading) {
@@ -300,5 +147,5 @@ export const GithubSettingsFetchComponent = () => {
     return <ResponseErrorPanel error={error} />;
   }
 
-  return <DenseTable users={value || []} />;
+  return <DenseTable repos={value || []} />;
 };

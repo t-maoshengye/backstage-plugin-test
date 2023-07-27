@@ -13,7 +13,7 @@ import { GithubSettingsFetchComponent } from '../GithubSettingsFetchComponent';
 
 export const GithubSettingsComponent = () => (
   <Page themeId="tool">
-    <Header title="Welcome to github-repos-settings!" subtitle="Optional subtitle">
+    <Header title="Welcome to github-repos!" subtitle="Optional subtitle">
       <HeaderLabel label="Owner" value="Team X" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>
