@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Octokit } from '@octokit/rest';
-import { Button, TextField, Select, MenuItem, FormControl, Typography, Card, CardContent } from '@material-ui/core';
+import { Button, TextField, Select, MenuItem, FormControl, Typography, Card, CardContent,Snackbar } from '@material-ui/core';
 
 const formItemStyle = {
   marginBottom: '20px', // Adjust as needed
@@ -54,7 +54,7 @@ const AddPeopleForm = ({ gh_token, repo }: AddPeopleFormProps) => {
   };
 
   let target_file = `Pay-Baymax/terraform-module/collaborator_${formValues.username}.tf`
-
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
   const handleSaveBranchPR = async (repo: Repo) => {
     try {
       const octokit = new Octokit({ auth: gh_token });
@@ -97,27 +97,57 @@ const AddPeopleForm = ({ gh_token, repo }: AddPeopleFormProps) => {
         sha: baseSha,
       });
 
-      // Update file in the new branch
-      const message = `Update ${target_file} by Backstage at ${timestamp}`;
-      await octokit.repos.createOrUpdateFileContents({
-        owner: repo.owner.login,
-        repo: repo.name,
-        path: target_file,
-        message: message,
-        content: Buffer.from(dialogContent).toString('base64'),
-        sha: fileData.sha,
-        branch: newBranchName,
-      });
+      try {
+        // Get file sha from new branch
+        const { data: fileData } = await octokit.repos.getContent({
+          owner: repo.owner.login,
+          repo: repo.name,
+          path: target_file,
+          ref: newBranchName
+        });
+      
+        // File exists, update it
+        const message = `Update ${target_file} by Backstage`;
+        await octokit.repos.createOrUpdateFileContents({
+          owner: repo.owner.login,
+          repo: repo.name,
+          path: target_file,
+          message: message,
+          content: Buffer.from(template).toString('base64'),
+          sha: fileData.sha,
+          branch: newBranchName,
+        });
+      } catch (error) {
+        // File doesn't exist, create it
+        if (error.status === 404) {
+          const message = `Create ${target_file} by Backstage`;
+          await octokit.repos.createOrUpdateFileContents({
+            owner: repo.owner.login,
+            repo: repo.name,
+            path: target_file,
+            message: message,
+            content: Buffer.from(template).toString('base64'),
+            branch: newBranchName,
+          });
+        } else {
+          // Some other error occurred
+          console.error(error);
+        }
+      }
 
-      // Create pull request
-      await octokit.pulls.create({
-        owner: repo.owner.login,
-        repo: repo.name,
-        title: `collaborator-add-people-by-backstage-${timestamp}`,
-        head: newBranchName,
-        base: 'main',
-      });
-  
+      try {
+        // Create pull request
+        await octokit.pulls.create({
+          owner: repo.owner.login,
+          repo: repo.name,
+          title: `collaborator-add-people-by-backstage-${timestamp}`,
+          head: newBranchName,
+          base: defaultBranch,
+        });
+      }catch (error){
+        console.error(error);
+      }
+      setOpenSuccessSnackbar(true);
       // console.log('New branch and pull request created successfully.');
     } catch (e) {
       console.error('Failed to create new branch and pull request:', e);
@@ -167,6 +197,12 @@ const AddPeopleForm = ({ gh_token, repo }: AddPeopleFormProps) => {
       <Button onClick={() => handleSaveBranchPR(repo)} color="primary">
         Save to new branch and pull request
       </Button>
+      <Snackbar
+        open={openSuccessSnackbar}
+        autoHideDuration={1200}
+        onClose={() => setOpenSuccessSnackbar(false)}
+        message="Resource configuration has been saved and PR"
+      />
     </form>
   );
 }

@@ -135,6 +135,11 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
               to="/github-repos"
               icon={GitHubIcon}
             />
+            <SidebarSubmenuItem
+              title="Github Settings"
+              to="/github-repos-settings"
+              icon={GitHubIcon}
+            />
           </SidebarSubmenu>
         </SidebarItem>
         {/* End global plugin nav */}
