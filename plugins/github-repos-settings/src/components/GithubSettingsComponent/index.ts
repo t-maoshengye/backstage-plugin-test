@@ -1,0 +1,1 @@
+export { GithubSettingsComponent } from './GithubSettingsComponent';

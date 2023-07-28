@@ -35,6 +35,8 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { HelloworldPage } from '@internal/plugin-helloworld';
 import { GithubReposPage } from '@internal/plugin-github-repos';
+import { OperateGithubTerraformPage } from '@internal/plugin-operate-github-terraform';
+import { GithubReposSettingsPage } from '@internal/plugin-github-repos-settings';
 
 const app = createApp({
   apis,
@@ -97,6 +99,7 @@ const routes = (
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
     <Route path="/helloworld" element={<HelloworldPage />} />
     <Route path="/github-repos" element={<GithubReposPage />} />
+    <Route path="/github-repos-settings" element={<GithubReposSettingsPage />} />
   </FlatRoutes>
 );
 
